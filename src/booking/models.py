@@ -16,11 +16,11 @@ class Machine(models.Model):
     ipv4 = models.GenericIPAddressField(max_length=50)
     ipv6 = models.GenericIPAddressField(max_length=50, blank=True, null=True)
     password = models.CharField(max_length=50)
-    cpuCores = models.IntegerField()
+    cpu_cores = models.IntegerField()
     ram = models.IntegerField()
     ssd = models.IntegerField(blank=True, null=True)
     hdd = models.IntegerField(blank=True, null=True)
-    operatingSystem = models.CharField(max_length=50, blank=True, null=True)
+    operating_system = models.CharField(max_length=50, blank=True, null=True)
     bandwidth = models.IntegerField()
 
     def __str__(self):
@@ -29,6 +29,6 @@ class Machine(models.Model):
 
 class Booking(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
-    bookedBy = models.ForeignKey(User, on_delete=models.CASCADE)
-    bookedFrom = models.DateTimeField()
-    bookedUntil = models.DateTimeField()
+    booked_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    booked_from = models.DateTimeField()
+    booked_until = models.DateTimeField()

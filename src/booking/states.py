@@ -31,9 +31,9 @@ class BookingState(StateMachine):
     def on_enter_booked(self, owner: User, start_datetime: datetime, end_datetime:datetime):
         new_booking = Booking.objects.create(
             machine=self.machine,
-            bookedBy=owner,
-            bookedFrom=start_datetime,
-            bookedUntil=end_datetime,
+            booked_by=owner,
+            booked_from=start_datetime,
+            booked_until=end_datetime,
         )
         self.machine.status = Machine.StatusEnum.BOOKED
         new_booking.save()

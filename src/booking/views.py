@@ -32,7 +32,7 @@ class MachineViewSet(viewsets.ModelViewSet):
     def check_availiable(self, machine_pk, start, end):
         bookings_in_interval = Booking.objects.filter(
             machine=machine_pk
-        ).exclude(Q(bookedUntil__lte=start) | Q(bookedFrom__gte=end))
+        ).exclude(Q(booked_until__lte=start) | Q(booked_from__gte=end))
         if bookings_in_interval:
             return False
         return True
@@ -97,7 +97,7 @@ class MachineViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         busy_machines = Booking.objects.filter(
-            Q(bookedFrom__lt=end_datetime) & Q(bookedUntil__gt=start_datetime)
+            Q(booked_from__lt=end_datetime) & Q(booked_until__gt=start_datetime)
         )
         machines = busy_machines.values_list('machine_id', flat=True)
         active_non_booked_machines = Machine.objects.exclude(id__in=machines).filter(status=Machine.StatusEnum.ACTIVE)
@@ -109,7 +109,7 @@ class MachineViewSet(viewsets.ModelViewSet):
         self.update_machines()
         now = datetime.datetime.now()
         user_current_bookings = Booking.objects.filter(
-            Q(bookedBy=request.user) & Q(bookedUntil__gt=now)
+            Q(booked_by=request.user) & Q(booked_until__gt=now)
         )
         user_machines = user_current_bookings.values_list(
             'machine_id', flat=True
@@ -126,7 +126,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         machine = Machine.objects.get(pk=self.request.data['machine'][0])
-        serializer.save(bookedBy=self.request.user, machine=machine)
+        serializer.save(booked_by=self.request.user, machine=machine)
 
     def get_permissions(self):
         if self.action == 'list':
@@ -139,7 +139,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def history(self, request):
-        queryset = Booking.objects.filter(bookedBy=request.user)
+        queryset = Booking.objects.filter(booked_by=request.user)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
