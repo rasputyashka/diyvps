@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[project]
+name = "diyvps"
+version = "0.0.1"
+authors = [
+    { name = "rasput", email = "rasputyashka@gmail.com" },
+]
+description = "telegram bot example package"
+requires-python = ">=3.10"
+dependencies = [
+  "django",
+  "django-cors-headers",
+  "djangorestframework",
+  "python-statemachine"
+]
+[project.optional-dependencies]
+test = [
+    "pytest"
+]
+lint = [
+    "flake8",
+    "mypy"
+]
+format = [
+  "black"
+]
+
+[project.scripts]
+site = "diyvps.manage:main"
+
+
+[[tool.mypy.overrides]]
+module = ['toml']
+ignore_missing_imports=true

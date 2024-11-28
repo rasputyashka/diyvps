@@ -7,21 +7,20 @@ class MachineSerializer(serializers.ModelSerializer):
         model = Machine
         fields = (
             'pk',
-            'password',
+            'name',
             'status',
+            'operatingSystem',
+            'password',
             'cpuCores',
             'ram',
             'ssd',
             'ipv4',
             'ipv6',
             'bandwidth',
-            'operatingSystem',
-            'status',
-            'name',
         )
 
 
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ['id', 'machine', 'bookedUntil', 'bookedFrom', 'booked']
+        fields = ['pk', 'machine', 'bookedUntil', 'bookedFrom']

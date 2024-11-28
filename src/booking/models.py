@@ -20,7 +20,7 @@ class Machine(models.Model):
     ram = models.IntegerField()
     ssd = models.IntegerField(blank=True, null=True)
     hdd = models.IntegerField(blank=True, null=True)
-    operatingSystem = models.CharField(max_length=50)
+    operatingSystem = models.CharField(max_length=50, blank=True, null=True)
     bandwidth = models.IntegerField()
 
     def __str__(self):
@@ -32,4 +32,3 @@ class Booking(models.Model):
     bookedBy = models.ForeignKey(User, on_delete=models.CASCADE)
     bookedFrom = models.DateTimeField()
     bookedUntil = models.DateTimeField()
-    booked = models.BooleanField(default=True)
