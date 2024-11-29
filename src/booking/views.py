@@ -117,7 +117,6 @@ class MachineViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def my(self, request):
-        self.update_machines()
         now = datetime.datetime.now()
         user_current_bookings = Booking.objects.filter(
             Q(booked_by=request.user) & Q(booked_until__gt=now)
