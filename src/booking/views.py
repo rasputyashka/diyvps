@@ -66,7 +66,11 @@ class MachineViewSet(viewsets.ModelViewSet):
         try:
             with transaction.atomic():
                 booking_state = BookingState(machine)
-                booking_state.process(owner=request.user, start_datetime=start_datetime, end_datetime=end_datetime)
+                booking_state.process(
+                    owner=request.user,
+                    start_datetime=start_datetime,
+                    end_datetime=end_datetime,
+                )
         except IntegrityError as e:
             logger.exception(e)
         return Response(status=status.HTTP_200_OK)
@@ -97,12 +101,19 @@ class MachineViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         busy_machines = Booking.objects.filter(
-            Q(booked_from__lt=end_datetime) & Q(booked_until__gt=start_datetime)
+            Q(booked_from__lt=end_datetime)
+            & Q(booked_until__gt=start_datetime)
         )
         machines = busy_machines.values_list('machine_id', flat=True)
-        active_non_booked_machines = Machine.objects.exclude(id__in=machines).filter(status=Machine.StatusEnum.ACTIVE)
+        active_non_booked_machines = Machine.objects.exclude(
+            id__in=machines
+        ).filter(status=Machine.StatusEnum.ACTIVE)
         serializer = self.get_serializer(active_non_booked_machines, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(details=False, methods=['POST'])
+    def cancel_booking(self, request, pk):
+        """Allows user to stop using this server."""
 
     @action(detail=False, methods=['GET'])
     def my(self, request):

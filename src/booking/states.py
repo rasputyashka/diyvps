@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 from .models import Machine, Booking
 
+
 class BookingState(StateMachine):
     unspecified = State(initial=True)
     free = State()
@@ -28,7 +29,9 @@ class BookingState(StateMachine):
         print('on enter free')
         self.machine.status = Machine.StatusEnum.ACTIVE
 
-    def on_enter_booked(self, owner: User, start_datetime: datetime, end_datetime:datetime):
+    def on_enter_booked(
+        self, owner: User, start_datetime: datetime, end_datetime: datetime
+    ):
         new_booking = Booking.objects.create(
             machine=self.machine,
             booked_by=owner,
@@ -40,4 +43,3 @@ class BookingState(StateMachine):
 
     def on_enter_unspecified(self):
         self.process()
-
