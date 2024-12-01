@@ -111,7 +111,7 @@ class MachineViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(active_non_booked_machines, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(details=False, methods=['POST'])
+    @action(detail=False, methods=['POST'])
     def cancel_booking(self, request, pk):
         """Allows user to stop using this server."""
 
