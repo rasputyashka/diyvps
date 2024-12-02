@@ -3,12 +3,11 @@ import logging
 
 from django.utils.timezone import now
 from django.contrib.auth.models import User
+from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, get_list_or_404
-from django.db import transaction, IntegrityError
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Machine, Booking
@@ -27,7 +26,7 @@ logger = logging.getLogger(__name__)
 class MachineViewSet(viewsets.ModelViewSet):
     queryset = Machine.objects.all()
     serializer_class = MachineSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
     def check_availiable(self, machine_pk, start, end):
         bookings_in_interval = Booking.objects.filter(
@@ -37,7 +36,11 @@ class MachineViewSet(viewsets.ModelViewSet):
             return False
         return True
 
-    @action(detail=True, methods=['get', 'post'])
+    @action(
+        detail=True,
+        methods=['get', 'post'],
+        permission_classes=[permissions.IsAuthenticated],
+    )
     def book(self, request, pk):
         start = request.query_params.get('start', '')
         end = request.query_params.get('end', '')
@@ -75,12 +78,14 @@ class MachineViewSet(viewsets.ModelViewSet):
             logger.exception(e)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['get', 'post'])
+    @action(
+        detail=True,
+        methods=['get', 'post'],
+        permission_classes=[permissions.IsAuthenticated],
+    )
     def reinstall(self, request, pk):
         machine = get_object_or_404(pk=pk)
         machine.os = None
-
-        # os.system(f'sudo /tmp/reinstall.sh {machine.name}')
 
         machine.save()
 
@@ -111,13 +116,21 @@ class MachineViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(active_non_booked_machines, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['POST'])
+    @action(
+        detail=False,
+        methods=['POST'],
+        permission_classes=[permissions.IsAuthenticated],
+    )
     def cancel_booking(self, request, pk):
         """Allows user to stop using this server."""
 
-    @action(detail=False, methods=['GET'])
+    @action(
+        detail=False,
+        methods=['GET'],
+        permission_classes=[permissions.IsAuthenticated],
+    )
     def my(self, request):
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(datetime.timezone.utc)
         user_current_bookings = Booking.objects.filter(
             Q(booked_by=request.user) & Q(booked_until__gt=now)
         )

@@ -18,7 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'booking.apps.BookingConfig',
-    'users.apps.UsersConfig',
+    'accounts.apps.AccountsConfig',
     'rest_framework',
     'corsheaders',
 ]
@@ -61,8 +61,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'OPTIONS': {
             'service': 'diyvps',
-            'passfile': '.pgpass'
-        }
+        },
     }
 }
 
@@ -83,7 +82,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -119,4 +118,5 @@ CORS_ALLOW_METHODS = [
 STATIC_URL = 'static/'
 
 CORS_ALLOW_CREDENTIALS = True
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
